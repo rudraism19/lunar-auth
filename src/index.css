@@ -182,8 +182,7 @@ All colors MUST be HSL.
     color: white;
     font-weight: 600;
     box-shadow: var(--shadow-secondary);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 0.625rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .btn-festhub:hover {
@@ -198,89 +197,10 @@ All colors MUST be HSL.
     border-radius: 1rem;
     box-shadow: var(--shadow-card);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 2rem 1.5rem;
-    text-align: center;
   }
   
   .feature-card-festhub:hover {
     transform: translateY(-8px) scale(1.03);
     box-shadow: var(--shadow-card-hover);
   }
-  
-  /* Enhanced animations */
-  .animate-fade-in {
-    animation: fadeIn 0.3s ease-out;
-  }
-  
-  .animate-scale-in {
-    animation: scaleIn 0.2s ease-out;
-  }
-  
-  .animate-slide-up {
-    animation: slideUp 0.4s ease-out;
-  }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  /* Section animations */
-  .section-enter {
-    animation: fadeInSection 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  /* Attendance form animations */
-  .attendance-form {
-    background: linear-gradient(120deg, hsl(212 100% 95%) 0%, hsl(45 100% 95%) 100%);
-    border-radius: 1.125rem;
-    box-shadow: var(--shadow-card);
-    padding: 2rem 1.5rem 2.5rem 1.5rem;
-    animation: fadeInAttendance 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    transition: all 0.3s ease;
-  }
-  
-  .attendance-form:hover {
-    box-shadow: var(--shadow-card-hover);
-    transform: translateY(-2px) scale(1.01);
-  }
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes scaleIn {
-  0% { transform: scale(0.95); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes slideUp {
-  0% { transform: translateY(30px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes fadeInSection {
-  0% { opacity: 0; transform: translateY(30px) scale(0.98); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes fadeInAttendance {
-  0% { opacity: 0; transform: translateY(30px) scale(0.98); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes popInLogin {
-  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-@keyframes glow {
-  0% { filter: drop-shadow(0 0 20px rgba(33, 150, 243, 0.3)); }
-  100% { filter: drop-shadow(0 0 40px rgba(33, 150, 243, 0.6)); }
 }

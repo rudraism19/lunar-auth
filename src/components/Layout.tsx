@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import ThreeBackground from './ThreeBackground';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -28,12 +27,9 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
   }
 
   return (
-    <div className="min-h-screen gradient-secondary relative overflow-hidden">
-      {/* Three.js Background */}
-      <ThreeBackground />
-      
+    <div className="min-h-screen gradient-secondary">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-gradient-to-r from-yellow-50/90 via-blue-50/90 to-red-50/90 backdrop-blur-md border-b-2 border-yellow-200/50 z-50 shadow-primary">
+      <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
@@ -43,7 +39,7 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
                 alt="College Logo" 
                 className="w-10 h-10 rounded-full shadow-secondary"
               />
-              <span className="text-2xl font-bold text-primary" style={{ textShadow: '0 0 10px rgba(33, 150, 243, 0.15)' }}>FestHub</span>
+              <span className="text-2xl font-bold text-primary">FestHub</span>
             </div>
 
             {/* Desktop Navigation */}
@@ -53,11 +49,7 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
                   <Button
                     variant={currentSection === item.id ? "default" : "ghost"}
                     onClick={() => onSectionChange(item.id)}
-                    className={`font-medium transition-all duration-300 ${
-                      currentSection === item.id 
-                        ? 'btn-festhub' 
-                        : 'bg-gradient-to-r from-blue-50 to-yellow-50 text-primary border border-blue-200/50 hover:btn-festhub hover:text-white'
-                    }`}
+                    className={`font-medium ${currentSection === item.id ? 'btn-festhub' : ''}`}
                   >
                     {item.label}
                   </Button>
@@ -78,7 +70,7 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
 
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
-            <div className="md:hidden pb-4 animate-slide-up">
+            <div className="md:hidden pb-4">
               <div className="flex flex-col gap-2">
                 {navItems.map((item) => (
                   <Button
@@ -88,11 +80,7 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
                       onSectionChange(item.id);
                       setMobileMenuOpen(false);
                     }}
-                    className={`justify-start transition-all duration-300 ${
-                      currentSection === item.id 
-                        ? 'btn-festhub' 
-                        : 'bg-gradient-to-r from-blue-50 to-yellow-50 text-primary border border-blue-200/50 hover:btn-festhub hover:text-white'
-                    }`}
+                    className={`justify-start ${currentSection === item.id ? 'btn-festhub' : ''}`}
                   >
                     {item.label}
                   </Button>
@@ -104,15 +92,13 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
       </nav>
 
       {/* Main Content */}
-      <main className="pt-20 relative z-10">
-        <div className="section-enter">
-          {children}
-        </div>
+      <main className="pt-20">
+        {children}
       </main>
 
       {/* Scroll Progress Indicator */}
       <div className="fixed top-0 left-0 w-full h-1 bg-muted z-40">
-        <div className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-300 ease-out" style={{ width: '0%' }} />
+        <div className="h-full bg-primary transition-all duration-300 ease-out" style={{ width: '0%' }} />
       </div>
     </div>
   );
