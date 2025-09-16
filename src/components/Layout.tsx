@@ -21,24 +21,17 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
     { id: 'about', label: 'About Author' },
   ];
 
-  // Don't render Layout for home section
-  if (currentSection === 'home') {
-    return <>{children}</>;
-  }
-
   return (
-    <div className="min-h-screen gradient-secondary">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-secondary/10 to-accent/5">
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <img 
-                src="https://img.icons8.com/color/48/graduation-cap.png" 
-                alt="College Logo" 
-                className="w-10 h-10 rounded-full shadow-secondary"
-              />
+              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-lg">F</span>
+              </div>
               <span className="text-2xl font-bold text-primary">FestHub</span>
             </div>
 
@@ -49,7 +42,7 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
                   <Button
                     variant={currentSection === item.id ? "default" : "ghost"}
                     onClick={() => onSectionChange(item.id)}
-                    className={`font-medium ${currentSection === item.id ? 'btn-festhub' : ''}`}
+                    className="font-medium"
                   >
                     {item.label}
                   </Button>
@@ -80,7 +73,7 @@ const Layout = ({ children, currentSection, onSectionChange }: LayoutProps) => {
                       onSectionChange(item.id);
                       setMobileMenuOpen(false);
                     }}
-                    className={`justify-start ${currentSection === item.id ? 'btn-festhub' : ''}`}
+                    className="justify-start"
                   >
                     {item.label}
                   </Button>
