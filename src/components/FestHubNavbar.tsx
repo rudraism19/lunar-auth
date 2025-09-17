@@ -20,7 +20,7 @@ const FestHubNavbar = ({ currentSection, onSectionChange }: NavbarProps) => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full z-[1000] px-8 py-4 flex justify-between items-center slide-in-right"
+    <nav className="fixed top-0 w-full z-[1000] px-8 py-4 flex justify-between items-center"
          style={{ 
            background: 'linear-gradient(90deg, hsl(48 100% 93%) 0%, hsl(194 100% 91%) 60%, hsl(0 100% 93%) 100%)',
            backdropFilter: 'blur(10px)',
@@ -28,13 +28,13 @@ const FestHubNavbar = ({ currentSection, onSectionChange }: NavbarProps) => {
            boxShadow: '0 2px 12px rgba(33, 150, 243, 0.10)'
          }}>
       {/* Logo */}
-      <div className="flex items-center gap-3 hover-scale">
+      <div className="flex items-center gap-3">
         <img 
           src="https://img.icons8.com/color/40/graduation-cap.png" 
           alt="UIT RGPV Shivpuri Logo" 
-          className="h-10 w-10 rounded-full shadow-gold float"
+          className="h-10 w-10 rounded-full shadow-gold"
         />
-        <span className="text-2xl font-bold text-[hsl(207_90%_54%)] glow" 
+        <span className="text-2xl font-bold text-[hsl(207_90%_54%)]" 
               style={{ textShadow: '0 0 10px rgba(33, 150, 243, 0.15)' }}>
           FestHub
         </span>
@@ -42,18 +42,18 @@ const FestHubNavbar = ({ currentSection, onSectionChange }: NavbarProps) => {
 
       {/* Desktop Navigation */}
       <ul className="hidden md:flex items-center gap-8">
-        {navItems.map((item, index) => (
-          <li key={item.id} className="slide-in-left" style={{ animationDelay: `${index * 0.1}s` }}>
+        {navItems.map((item) => (
+          <li key={item.id}>
             <button
               onClick={() => onSectionChange(item.id)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl border-2 font-semibold relative overflow-hidden hover-lift hover-glow ${
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl border-2 font-semibold transition-all duration-300 relative overflow-hidden ${
                 currentSection === item.id
                   ? 'text-white bg-gradient-to-r from-[hsl(207_90%_54%)] to-[hsl(45_93%_47%)] border-[hsl(45_93%_47%)] shadow-elegant'
-                  : 'text-[hsl(207_90%_54%)] bg-gradient-to-r from-[hsl(194_100%_91%)] to-[hsl(48_100%_93%)] border-[hsl(194_100%_91%)] hover:text-white hover:bg-gradient-to-r hover:from-[hsl(207_90%_54%)] hover:to-[hsl(45_93%_47%)] hover:border-[hsl(45_93%_47%)] hover:shadow-elegant'
+                  : 'text-[hsl(207_90%_54%)] bg-gradient-to-r from-[hsl(194_100%_91%)] to-[hsl(48_100%_93%)] border-[hsl(194_100%_91%)] hover:text-white hover:bg-gradient-to-r hover:from-[hsl(207_90%_54%)] hover:to-[hsl(45_93%_47%)] hover:border-[hsl(45_93%_47%)] hover:shadow-elegant hover:transform hover:-translate-y-1 hover:scale-105'
               }`}
               style={{ boxShadow: '0 2px 8px hsl(207 90% 54% / 0.13)' }}
             >
-              <img src={item.icon} alt={item.label} className="w-5 h-5 hover-scale" />
+              <img src={item.icon} alt={item.label} className="w-5 h-5" />
               {item.label}
             </button>
           </li>
