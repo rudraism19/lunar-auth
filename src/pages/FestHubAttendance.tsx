@@ -55,17 +55,17 @@ const FestHubAttendance = () => {
   };
 
   return (
-    <section className="min-h-screen pt-20 pb-16" 
+    <section className="min-h-screen pt-20 pb-16 fade-in" 
              style={{ 
                background: 'linear-gradient(135deg, hsl(45 93% 47%) 0%, hsl(194 100% 91%) 60%, hsl(0 100% 93%) 100%)',
                borderRadius: '24px',
                boxShadow: '0 8px 32px rgba(255, 215, 0, 0.12)'
              }}>
       <div className="max-w-4xl mx-auto px-8">
-        <h2 className="text-4xl font-bold text-center mb-8 text-[hsl(207_90%_54%)]">Attendance</h2>
+        <h2 className="text-4xl font-bold text-center mb-8 text-[hsl(207_90%_54%)] glow fade-in-up">Attendance</h2>
         
         {/* Role Selection */}
-        <div className="flex justify-center gap-8 mb-8">
+        <div className="flex justify-center gap-8 mb-8 fade-in-up" style={{ animationDelay: '0.2s' }}>
           <Button
             onClick={(e) => {
               setSelectedRole('teacher');
@@ -73,9 +73,9 @@ const FestHubAttendance = () => {
               setStudentMethod(null);
               handleRippleEffect(e);
             }}
-            className={`btn-festhub relative overflow-hidden ${selectedRole === 'teacher' ? 'shadow-elegant' : ''}`}
+            className={`btn-festhub relative overflow-hidden hover-scale ${selectedRole === 'teacher' ? 'shadow-elegant' : ''}`}
           >
-            Teacher
+            👨‍🏫 Teacher
           </Button>
           <Button
             onClick={(e) => {
@@ -84,34 +84,34 @@ const FestHubAttendance = () => {
               setStudentMethod(null);
               handleRippleEffect(e);
             }}
-            className={`btn-festhub relative overflow-hidden ${selectedRole === 'student' ? 'shadow-elegant' : ''}`}
+            className={`btn-festhub relative overflow-hidden hover-scale ${selectedRole === 'student' ? 'shadow-elegant' : ''}`}
           >
-            Student
+            👨‍🎓 Student
           </Button>
         </div>
 
         {/* Teacher Section */}
         {selectedRole === 'teacher' && (
-          <div className="attendance-inner-tab">
+          <div className="attendance-inner-tab scale-in">
             {!selectedMethod ? (
-              <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <div className="flex flex-wrap justify-center gap-4 mb-8 fade-in-up">
                 <Button
                   onClick={(e) => {
                     setSelectedMethod('code');
                     handleRippleEffect(e);
                   }}
-                  className="btn-festhub relative overflow-hidden"
+                  className="btn-festhub relative overflow-hidden hover-scale"
                 >
-                  6 Digit Code
+                  🔢 6 Digit Code
                 </Button>
                 <Button
                   onClick={(e) => {
                     setSelectedMethod('qr');
                     handleRippleEffect(e);
                   }}
-                  className="btn-festhub relative overflow-hidden"
+                  className="btn-festhub relative overflow-hidden hover-scale"
                 >
-                  QR Code
+                  📱 QR Code
                 </Button>
               </div>
             ) : (

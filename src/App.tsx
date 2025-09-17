@@ -1,105 +1,91 @@
-import { useState, useEffect } from 'react';
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Session } from "@supabase/supabase-js";
+import { useState } from 'react';
+import { Toaster } from '@/components/ui/toaster';
+import FestHubLogin from '@/components/FestHubLogin';
+import FestHubNavbar from '@/components/FestHubNavbar';
+import FestHubHome from '@/pages/FestHubHome';
+import FestHubAttendance from '@/pages/FestHubAttendance';
+import Events from '@/pages/Events';
+import IndianCalendar from '@/pages/IndianCalendar';
+import Features from '@/pages/Features';
+import Aims from '@/pages/Aims';
+import About from '@/pages/About';
 
-// Components
-import Layout from "./components/Layout";
-import Login from "./components/Login";
-
-// Pages
-import Home from "./pages/Home";
-import Events from "./pages/Events";
-import Calendar from "./pages/Calendar";
-import Features from "./pages/Features";
-import Attendance from "./pages/Attendance";
-import Aims from "./pages/Aims";
-import About from "./pages/About";
-
-const queryClient = new QueryClient();
-
-const App = () => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentSection, setCurrentSection] = useState('home');
 
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const handleLogin = (success: boolean) => {
+    if (success) {
+      setIsLoggedIn(true);
+    }
+  };
 
   const handleSectionChange = (section: string) => {
     setCurrentSection(section);
   };
 
-  const renderCurrentSection = () => {
+  if (!isLoggedIn) {
+    return (
+      <>
+        <FestHubLogin onLogin={handleLogin} />
+        <Toaster />
+      </>
+    );
+  }
+
+  const renderSection = () => {
     switch (currentSection) {
       case 'home':
-        return <Home onSectionChange={handleSectionChange} />;
+        return <FestHubHome onSectionChange={handleSectionChange} />;
       case 'events':
         return <Events />;
       case 'calendar':
-        return <Calendar />;
+        return <IndianCalendar />;
       case 'features':
         return <Features />;
       case 'attendance':
-        return <Attendance />;
+        return <FestHubAttendance />;
       case 'aims':
         return <Aims />;
       case 'about':
         return <About />;
       default:
-        return <Home onSectionChange={handleSectionChange} />;
+        return <FestHubHome onSectionChange={handleSectionChange} />;
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary/5 via-secondary/10 to-accent/5">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto animate-pulse">
-            <span className="text-primary-foreground font-bold text-xl">F</span>
-          </div>
-          <p className="text-muted-foreground">Loading FestHub...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        
-        {!session ? (
-          <Login onLoginSuccess={() => {}} />
-        ) : (
-          <Layout 
-            currentSection={currentSection} 
-            onSectionChange={handleSectionChange}
-          >
-            {renderCurrentSection()}
-          </Layout>
-        )}
-      </TooltipProvider>
-    </QueryClientProvider>
+    <div className="min-h-screen relative">
+      {/* Background Canvas */}
+      <canvas 
+        id="threejs-canvas" 
+        className="fixed top-0 left-0 w-full h-full -z-10 opacity-15"
+      />
+      
+      {/* Scroll Progress Indicator */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-muted z-40">
+        <div className="h-full bg-[hsl(207_90%_54%)] transition-all duration-300 ease-out" style={{ width: '0%' }} />
+      </div>
+
+      {/* Floating Shapes */}
+      <div className="fixed inset-0 pointer-events-none z-10">
+        <div className="absolute top-1/4 left-1/4 text-4xl animate-bounce opacity-20 float">🎯</div>
+        <div className="absolute top-1/3 right-1/4 text-4xl animate-pulse opacity-20 float" style={{ animationDelay: '1s' }}>🏆</div>
+        <div className="absolute bottom-1/3 left-1/3 text-4xl animate-bounce opacity-20 float" style={{ animationDelay: '2s' }}>🎪</div>
+      </div>
+
+      <FestHubNavbar 
+        currentSection={currentSection} 
+        onSectionChange={handleSectionChange} 
+      />
+      
+      <main className="relative z-20">
+        {renderSection()}
+      </main>
+      
+      <Toaster />
+    </div>
   );
-};
+}
 
 export default App;
