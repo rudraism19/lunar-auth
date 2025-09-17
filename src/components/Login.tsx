@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
-import { User, Lock, Mail } from 'lucide-react';
+import { User, Lock, Mail, Phone } from 'lucide-react';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -15,6 +15,8 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [mobile, setMobile] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -23,10 +25,12 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
     setError('');
     
     try {
+      // The redirectTo URL must be added to your Supabase project's authentication settings.
+      // Make sure the URL in Supabase does not have a trailing slash.
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: window.location.origin,
         },
       });
       
@@ -48,6 +52,12 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              full_name: name,
+              mobile,
+            }
+          }
         });
         if (error) throw error;
         setError('Check your email for verification link');
@@ -72,8 +82,8 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
       
       <Card className="w-full max-w-md relative z-10 shadow-2xl border-primary/20">
         <CardHeader className="text-center space-y-4">
-          <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto shadow-lg">
-            <span className="text-primary-foreground font-bold text-2xl">F</span>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-lg">
+            <img src="/image.png" alt="FestHub Logo" className="w-full h-full object-cover rounded-full" />
           </div>
           
           <div>
@@ -112,6 +122,25 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
 
           {/* Email/Password Form */}
           <form onSubmit={handleEmailAuth} className="space-y-4">
+            {isSignUp && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input id="name" type="text" placeholder="Enter your full name" value={name} onChange={(e) => setName(e.target.value)} className="pl-10" required />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="mobile">Mobile Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input id="mobile" type="tel" placeholder="Enter your mobile number" value={mobile} onChange={(e) => setMobile(e.target.value)} className="pl-10" required />
+                  </div>
+                </div>
+              </>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -135,7 +164,7 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="Create a password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"

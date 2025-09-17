@@ -17,7 +17,7 @@ import Calendar from "./pages/Calendar";
 import Features from "./pages/Features";
 import Attendance from "./pages/Attendance";
 import Aims from "./pages/Aims";
-import About from "./pages/About";
+import UserInfo from "./pages/UserInfo";
 
 const queryClient = new QueryClient();
 
@@ -61,8 +61,8 @@ const App = () => {
         return <Attendance />;
       case 'aims':
         return <Aims />;
-      case 'about':
-        return <About />;
+      case 'user-info':
+        return <UserInfo />;
       default:
         return <Home onSectionChange={handleSectionChange} />;
     }
@@ -91,6 +91,7 @@ const App = () => {
           <Login onLoginSuccess={() => {}} />
         ) : (
           <Layout 
+            user={session.user}
             currentSection={currentSection} 
             onSectionChange={handleSectionChange}
           >

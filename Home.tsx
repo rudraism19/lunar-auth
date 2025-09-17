@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Trophy, Zap, Target, Github, Linkedin, Mail, Heart, Lightbulb } from 'lucide-react';
+import { Calendar, Trophy, Zap, Target, Github, Linkedin, Mail, ExternalLink, Code, Lightbulb, Heart, PartyPopper } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface HomeProps {
   onSectionChange: (section: string) => void;
@@ -42,28 +43,36 @@ const Home = ({ onSectionChange }: HomeProps) => {
     <div className="container mx-auto px-4 py-16">
       <div className="text-center space-y-8 mb-16">
         {/* Logo */}
-        <div className="flex justify-center items-center gap-4 mb-8 animate-in fade-in scale-90 duration-500">
+        <div className="flex justify-center items-center gap-4 mb-8">
           <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-lg">
+            <PartyPopper className="text-primary-foreground w-12 h-12" />
+          </div>
+          <div className="w-16 h-16 rounded-full overflow-hidden">
             <img 
-              src="/image.png" 
+              src="https://img.icons8.com/color/96/graduation-cap.png" 
               alt="College Logo" 
-              className="w-full h-full object-cover rounded-full"
+              className="w-full h-full object-cover"
             />
           </div>
         </div>
 
         {/* Hero Content */}
-        <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent pb-2">
+        <div className="space-y-6">
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
             College Event Manager
           </h1>
           
-          <p className="text-xl text-muted-foreground italic font-medium mt-8">
+          <p className="text-xl text-muted-foreground italic font-medium mt-4">
             "Excellence is never an accident."
           </p>
           
           <p className="text-lg text-foreground max-w-3xl mx-auto leading-relaxed">
             Smart platform for events, attendance, and routines.
+            <br />
+            <span className="text-sm text-muted-foreground mt-2 block">
+              Featuring QR attendance, face recognition, Bluetooth connectivity, Wi-Fi integration, 
+              calendar management, smart suggestions, analytics, and achievement tracking.
+            </span>
           </p>
         </div>
 
@@ -84,8 +93,7 @@ const Home = ({ onSectionChange }: HomeProps) => {
               key={index}
               src={icon.src} 
               alt={icon.alt}
-              className="w-12 h-12 transition-transform hover:scale-110 animate-in fade-in zoom-in"
-              style={{ animationDelay: `${200 + index * 50}ms`, animationFillMode: 'backwards' }}
+              className="w-12 h-12 transition-transform hover:scale-110"
             />
           ))}
         </div>
@@ -98,8 +106,7 @@ const Home = ({ onSectionChange }: HomeProps) => {
           return (
             <Card 
               key={index}
-              className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg border-border/50 hover:border-primary/50 animate-in fade-in zoom-in-95"
-              style={{ animationDelay: `${100 + index * 100}ms`, animationFillMode: 'backwards' }}
+              className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg border-border/50 hover:border-primary/50"
               onClick={() => onSectionChange(feature.section)}
             >
               <CardHeader className="text-center pb-4">
@@ -119,7 +126,7 @@ const Home = ({ onSectionChange }: HomeProps) => {
       </div>
 
       {/* About Developers */}
-      <div className="mt-16 animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="mt-16">
         <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-foreground mb-4">👨‍💻 About Developers</h1>
         <p className="text-lg text-muted-foreground">
@@ -130,10 +137,7 @@ const Home = ({ onSectionChange }: HomeProps) => {
       <div className="max-w-6xl mx-auto">
         <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden">
-                  <img src="/team.jpg" alt="Team CodeFusion Logo" className="w-full h-full object-cover" />
-                </div>
+              <CardTitle className="flex items-center gap-2">
                 <Heart className="w-5 h-5 text-red-500" />
                 Team CodeFusion
               </CardTitle>
@@ -182,34 +186,42 @@ const Home = ({ onSectionChange }: HomeProps) => {
         </div>
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle>📞 Contact Information</CardTitle>
+            <CardTitle>Get in Touch</CardTitle>
             <CardDescription>
-              Get in touch with us for support, collaborations, or feedback about the FestHub platform.
+              Have questions about FestHub or want to collaborate? We'd love to hear from you!
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-semibold mb-3">📧 Email</h4>
+                <h4 className="font-semibold mb-3">Contact Information</h4>
                 <div className="space-y-2 text-sm">
-                  <p>teamcodefusion2025@gmail.com</p>
-                </div>
-                <h4 className="font-semibold mb-3 mt-4">📱 Phone</h4>
-                <div className="space-y-2 text-sm">
-                  <p>+91 72259 30961</p>
-                  <p>+91 90747 12436</p>
+                  <p className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    team.codefusion@example.com
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Github className="w-4 h-4 text-muted-foreground" />
+                    GitHub: @codefusion
+                  </p>
                 </div>
               </div>
+
               <div>
-                <h4 className="font-semibold mb-3">🌐 Social Media</h4>
-                <div className="space-y-2 text-sm">
-                  <p>Twitter: @festhub_official</p>
-                  <p>Instagram: @teamcodefusion2025</p>
-                </div>
-                <h4 className="font-semibold mb-3 mt-4">🎓 Developer Contact</h4>
-                <div className="space-y-2 text-sm">
-                  <p>dwivedirishu52@gmail.com</p>
-                  <p>himanshu8769111@gmail.com</p>
+                <h4 className="font-semibold mb-3">Let's Connect</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  We're always open to discussing new projects, creative ideas, or opportunities to 
+                  improve educational technology.
+                </p>
+                <div className="flex gap-2">
+                  <Button size="sm" className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    Send Email
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex items-center gap-2">
+                    <Linkedin className="w-4 h-4" />
+                    LinkedIn
+                  </Button>
                 </div>
               </div>
             </div>

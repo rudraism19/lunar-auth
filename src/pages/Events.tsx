@@ -2,12 +2,27 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Trophy, Users, MapPin } from 'lucide-react';
+import { CalendarDays, Users, MapPin } from 'lucide-react';
+import EventRegistrationForm from '@/components/EventRegistrationForm';
+
+interface Event {
+  id: number;
+  title: string;
+  date: string;
+  prize: string;
+  description: string;
+  participants: number;
+  location: string;
+  image: string;
+}
 
 const Events = () => {
   const [activeTab, setActiveTab] = useState('arts');
+  const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  const events = {
+  const events: { [key: string]: Event[] } = {
     arts: [
       {
         id: 1,
@@ -33,24 +48,24 @@ const Events = () => {
     tech: [
       {
         id: 3,
-        title: 'CodeFest Hackathon',
-        date: 'April 5-6, 2025',
-        prize: '₹1,00,000',
-        description: 'Build innovative solutions in 48 hours.',
+        title: 'Internal Hackathon',
+        date: 'September 20, 2025',
+        prize: '',
+        description: 'Build innovative solutions in 12 hours.',
         participants: 200,
-        location: 'Computer Lab',
+        location: 'MU Hall',
         image: 'https://img.icons8.com/color/96/laptop.png',
       },
-      {
-        id: 4,
-        title: 'AI/ML Workshop',
-        date: 'April 20, 2025',
-        prize: 'Certificate',
-        description: 'Learn the fundamentals of artificial intelligence.',
-        participants: 100,
-        location: 'Tech Auditorium',
-        image: 'https://img.icons8.com/color/96/artificial-intelligence.png',
-      },
+      // {
+      //   id: 4,
+      //   title: 'AI/ML Workshop',
+      //   date: 'April 20, 2025',
+      //   prize: 'Certificate',
+      //   description: 'Learn the fundamentals of artificial intelligence.',
+      //   participants: 100,
+      //   location: 'Tech Auditorium',
+      //   image: 'https://img.icons8.com/color/96/artificial-intelligence.png',
+      // },
     ],
     sports: [
       {
@@ -82,6 +97,27 @@ const Events = () => {
     { id: 'sports', label: 'Sports', icon: 'https://img.icons8.com/color/32/trophy.png' },
   ];
 
+  const handleRegisterClick = (event: Event) => {
+    setSelectedEvent(event);
+    setShowRegistrationForm(true);
+  };
+
+  const handleRegistrationSubmit = (details: { name: string; email: string; mobile: string }) => {
+    if (selectedEvent) {
+      console.log('Registering for:', selectedEvent.title, 'with details:', details);
+      setRegisteredEvents(prev => [...prev, selectedEvent.id]);
+      setShowRegistrationForm(false);
+      setSelectedEvent(null);
+    }
+  };
+
+  const handleRegistrationClose = () => {
+    setShowRegistrationForm(false);
+    setSelectedEvent(null);
+  };
+
+  const isRegistered = (eventId: number) => registeredEvents.includes(eventId);
+
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="text-center mb-12">
@@ -91,7 +127,6 @@ const Events = () => {
         </p>
       </div>
 
-      {/* Tab Navigation */}
       <div className="flex justify-center mb-8">
         <div className="flex flex-wrap gap-4 p-1 bg-muted rounded-lg">
           {tabs.map((tab) => (
@@ -108,9 +143,8 @@ const Events = () => {
         </div>
       </div>
 
-      {/* Events Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events[activeTab as keyof typeof events].map((event) => (
+        {events[activeTab].map((event) => (
           <Card key={event.id} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/50">
             <CardHeader className="space-y-4">
               <div className="flex justify-between items-start">
@@ -153,13 +187,25 @@ const Events = () => {
                 </div>
               </div>
 
-              <Button className="w-full mt-4">
-                Register Now
+              <Button 
+                className="w-full mt-4" 
+                onClick={() => handleRegisterClick(event)}
+                disabled={isRegistered(event.id)}
+              >
+                {isRegistered(event.id) ? 'Registered' : 'Register Now'}
               </Button>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {showRegistrationForm && selectedEvent && (
+        <EventRegistrationForm
+          eventName={selectedEvent.title}
+          onRegister={handleRegistrationSubmit}
+          onClose={handleRegistrationClose}
+        />
+      )}
     </div>
   );
 };
