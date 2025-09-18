@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Mail, Phone, CheckCircle, XCircle } from 'lucide-react';
+import { Mail, Phone, CheckCircle, XCircle, Edit, Camera } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 // Mock data for registered events and attendance history
 const registeredEvents = [
@@ -40,12 +42,20 @@ const attendanceHistory = [
 const UserInfo = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       if (data.user) {
         setUser(data.user);
+        setFullName(data.user.user_metadata.full_name || '');
+        setMobile(data.user.user_metadata.mobile || '');
       } else {
         console.error('Error fetching user:', error);
       }
@@ -54,6 +64,60 @@ const UserInfo = () => {
 
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    if (avatarFile) {
+      const objectUrl = URL.createObjectURL(avatarFile);
+      setAvatarPreview(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [avatarFile]);
+
+  const handleUpdateProfile = async () => {
+    if (!user) return;
+
+    let avatar_url = user.user_metadata.avatar_url;
+
+    if (avatarFile) {
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(`${user.id}/${avatarFile.name}`, avatarFile, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      if (data) {
+        const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(data.path);
+        avatar_url = publicUrlData.publicUrl;
+      } else {
+        console.error('Error uploading avatar:', error?.message);
+      }
+    }
+
+    const { data: updatedUserData, error: updateUserError } = await supabase.auth.updateUser({
+      data: { full_name: fullName, avatar_url, mobile },
+    });
+
+    if (updatedUserData.user) {
+      setUser(updatedUserData.user);
+      setIsEditing(false);
+      setAvatarFile(null);
+      setAvatarPreview(null);
+    } else {
+      console.error('Error updating user:', updateUserError?.message);
+    }
+  };
+  
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    if (user) {
+        setFullName(user.user_metadata.full_name || '');
+        setMobile(user.user_metadata.mobile || '');
+    }
+  };
 
   if (loading) {
     return <div>Loading user information...</div>;
@@ -73,11 +137,42 @@ const UserInfo = () => {
         <div className="md:col-span-1">
           <Card>
             <CardHeader className="flex flex-col items-center text-center">
-              <Avatar className="w-24 h-24 mb-4">
-                <AvatarImage src={user.user_metadata.avatar_url} />
-                <AvatarFallback>{user.user_metadata.full_name?.[0] || 'U'}</AvatarFallback>
-              </Avatar>
-              <CardTitle className="text-2xl">{user.user_metadata.full_name || 'User'}</CardTitle>
+                <div className="relative">
+                    <Avatar className="w-24 h-24 mb-4">
+                        <AvatarImage src={avatarPreview || user.user_metadata.avatar_url} />
+                        <AvatarFallback>{user.user_metadata.full_name?.[0] || 'U'}</AvatarFallback>
+                    </Avatar>
+                    {isEditing && (
+                        <>
+                        <input 
+                            type="file" 
+                            ref={fileInputRef} 
+                            className="hidden" 
+                            onChange={(e) => setAvatarFile(e.target.files ? e.target.files[0] : null)} 
+                            accept="image/*"
+                        />
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="absolute bottom-4 right-0 rounded-full bg-background/80" 
+                            onClick={() => fileInputRef.current?.click()}
+                        >
+                            <Camera className="h-5 w-5" />
+                        </Button>
+                        </>
+                    )}
+                </div>
+              {isEditing ? (
+                <Input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="text-center"
+                  placeholder="Full Name"
+                />
+              ) : (
+                <CardTitle className="text-2xl">{user.user_metadata.full_name || 'User'}</CardTitle>
+              )}
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-4">
@@ -86,8 +181,28 @@ const UserInfo = () => {
               </div>
               <div className="flex items-center gap-4">
                 <Phone className="text-muted-foreground" />
-                <span>{user.user_metadata.mobile || 'Not provided'}</span>
+                {isEditing ? (
+                  <Input
+                    type="text"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    placeholder="Phone Number"
+                  />
+                ) : (
+                  <span>{user.user_metadata.mobile || 'Not provided'}</span>
+                )}
               </div>
+              {isEditing ? (
+                <div className="flex gap-2 mt-6">
+                  <Button onClick={handleUpdateProfile} className="flex-1">Save Changes</Button>
+                  <Button variant="outline" onClick={handleCancelEdit} className="flex-1">Cancel</Button>
+                </div>
+              ) : (
+                <Button onClick={() => setIsEditing(true)} variant="outline" className="w-full">
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit Profile
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>

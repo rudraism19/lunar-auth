@@ -56,7 +56,7 @@ const App = () => {
       case 'calendar':
         return <Calendar />;
       case 'features':
-        return <Features />;
+        return <Features onSectionChange={handleSectionChange} />;
       case 'attendance':
         return <Attendance />;
       case 'aims':

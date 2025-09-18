@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Trophy, Zap, Target, Github, Linkedin, Mail, Heart, Lightbulb } from 'lucide-react';
+import { Calendar, Trophy, Zap, Target, Heart, Lightbulb, Twitter, Instagram } from 'lucide-react';
 
 interface HomeProps {
   onSectionChange: (section: string) => void;
@@ -161,12 +161,20 @@ const Home = ({ onSectionChange }: HomeProps) => {
                 <CardTitle>Meet the Developers</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-                <p>Gourav Kushwah</p>
+                <p>Hacker Kushwah</p>
+                <p>Chamiya Dwivedi</p>
+                <p>Coder Hima</p>
+                <p>Bhullar</p>
+                <p>Tatya Vichu</p>
+                <p>Doremon</p>
+                <p>Sasti 4g</p>
+                <p>Vertical didi</p>
+                {/* <p>Gourav Kushwah</p>
                 <p>Rishabh Dwivedi</p>
-                <p>Himanshu Sharma</p>
+                <p>Himanshu Gupta</p>
                 <p>Rudra Bhullar</p>
                 <p>Vanshika Rathi</p>
-                <p>Somya Sharma</p>
+                <p>Somya Sharma</p> */}
             </CardContent>
           </Card>
           <Card className="md:col-span-2">
@@ -201,10 +209,14 @@ const Home = ({ onSectionChange }: HomeProps) => {
                 </div>
               </div>
               <div>
-                <h4 className="font-semibold mb-3">🌐 Social Media</h4>
-                <div className="space-y-2 text-sm">
-                  <p>Twitter: @festhub_official</p>
-                  <p>Instagram: @teamcodefusion2025</p>
+                <h4 className="font-semibold mb-3">🌐 Our Socials</h4>
+                <div className="flex items-center gap-4">
+                  <a href="https://twitter.com/teamcodefusionn" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                    <Twitter className="w-6 h-6" />
+                  </a>
+                  <a href="https://www.instagram.com/teamcodefusion2025" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                    <Instagram className="w-6 h-6" />
+                  </a>
                 </div>
                 <h4 className="font-semibold mb-3 mt-4">🎓 Developer Contact</h4>
                 <div className="space-y-2 text-sm">

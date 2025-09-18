@@ -11,10 +11,12 @@ import {
   Bell,
   MapPin 
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
-const Features = () => {
-  const navigate = useNavigate();
+interface FeaturesProps {
+  onSectionChange: (section: string) => void;
+}
+
+const Features = ({ onSectionChange }: FeaturesProps) => {
 
   const features = [
     {
@@ -23,7 +25,7 @@ const Features = () => {
       description: 'Quick and contactless attendance marking using QR code scanning.',
       status: 'Live',
       color: 'text-blue-500',
-      path: '/attendance',
+      path: 'attendance',
     },
     {
       icon: UserCheck,
@@ -31,7 +33,7 @@ const Features = () => {
       description: 'AI-powered face recognition for automated attendance tracking.',
       status: 'Coming Soon',
       color: 'text-green-500',
-      path: '/features',
+      path: 'features',
     },
     {
       icon: Wifi,
@@ -39,7 +41,7 @@ const Features = () => {
       description: 'Automatic attendance when connected to college WiFi network.',
       status: 'Coming Soon',
       color: 'text-purple-500',
-      path: '/features',
+      path: 'features',
     },
     {
       icon: Smartphone,
@@ -47,7 +49,7 @@ const Features = () => {
       description: 'Simple numeric code entry for quick attendance marking.',
       status: 'Live',
       color: 'text-orange-500',
-      path: '/attendance',
+      path: 'attendance',
     },
     {
       icon: Calendar,
@@ -55,7 +57,7 @@ const Features = () => {
       description: 'Intelligent event scheduling with conflict detection and reminders.',
       status: 'Live',
       color: 'text-pink-500',
-      path: '/calendar',
+      path: 'calendar',
     },
     {
       icon: BarChart,
@@ -63,7 +65,7 @@ const Features = () => {
       description: 'Comprehensive attendance reports and event participation analytics.',
       status: 'Live',
       color: 'text-indigo-500',
-      path: '/aims',
+      path: 'aims',
     },
     {
       icon: Bell,
@@ -71,7 +73,7 @@ const Features = () => {
       description: 'Personalized reminders and updates for events and deadlines.',
       status: 'Beta',
       color: 'text-yellow-500',
-      path: '/features',
+      path: 'features',
     },
     {
       icon: MapPin,
@@ -79,7 +81,7 @@ const Features = () => {
       description: 'Geo-fencing for automatic check-ins and location-aware features.',
       status: 'Coming Soon',
       color: 'text-red-500',
-      path: '/features',
+      path: 'features',
     },
   ];
 
@@ -94,7 +96,7 @@ const Features = () => {
 
   const handleCardClick = (status: string, path: string) => {
     if (status !== 'Coming Soon') {
-      navigate(path);
+      onSectionChange(path);
     }
   };
 
@@ -115,7 +117,11 @@ const Features = () => {
             <Card 
               key={index}
               onClick={() => handleCardClick(feature.status, feature.path)}
-              className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/50 relative overflow-hidden cursor-pointer"
+              className={`group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/50 relative overflow-hidden ${
+                feature.status === 'Coming Soon'
+                  ? 'cursor-not-allowed opacity-50'
+                  : 'cursor-pointer'
+              }`}
             >
               <CardHeader className="text-center pb-4">
                 <div className="flex justify-between items-start mb-4">

@@ -222,7 +222,7 @@ const Attendance = () => {
           <div className="text-center p-8 bg-muted rounded-lg">
             <div className="mb-4">
                 <p className="text-sm font-medium text-muted-foreground">Teacher: {teacherName}</p>
-                <p className="text-sm font-medium text-muted-foreground">{subject} - {date}</p>
+                <p className-="text-sm font-medium text-muted-foreground">{subject} - {date}</p>
             </div>
             <h3 className="text-lg font-medium">Attendance Code:</h3>
             <p className="text-6xl font-bold tracking-widest my-4 font-mono">{generatedCode}</p>
