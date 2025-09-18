@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Lock, Mail, Phone } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -23,6 +24,7 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError('');
+    toast.info('Redirecting to Google for sign in...');
     
     try {
       // The redirectTo URL must be added to your Supabase project's authentication settings.
@@ -37,6 +39,7 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
       if (error) throw error;
     } catch (err: any) {
       setError(err.message || 'An error occurred during Google sign in');
+      toast.error(err.message || 'An error occurred during Google sign in');
     } finally {
       setLoading(false);
     }
@@ -61,6 +64,7 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
         });
         if (error) throw error;
         setError('Check your email for verification link');
+        toast.success('Check your email for a verification link!');
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
