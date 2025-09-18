@@ -164,16 +164,20 @@ const Calendar = () => {
             {getDaysInMonth().map((date, index) => (
               <div
                 key={index}
-                className={`min-h-[100px] p-2 border border-border rounded-lg ${
-                  date ? 'bg-background hover:bg-muted/50 transition-colors' : ''
+                className={`min-h-[80px] p-1 border rounded-lg ${
+                  date
+                    ? isToday(date)
+                      ? 'bg-orange-200 border-orange-400'
+                      : 'bg-orange-100 hover:bg-orange-200 border-border transition-colors'
+                    : ''
                 }`}
               >
                 {date && (
                   <>
                     <div
-                      className={`text-sm font-medium mb-1 ${
+                      className={`text-xs font-medium mb-1 ${
                         isToday(date) 
-                          ? 'bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center' 
+                          ? 'bg-orange-400 text-white rounded-full w-5 h-5 flex items-center justify-center' 
                           : ''
                       }`}
                     >

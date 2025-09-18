@@ -2,7 +2,40 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, User as UserIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Mail, Phone, CheckCircle, XCircle } from 'lucide-react';
+
+// Mock data for registered events and attendance history
+const registeredEvents = [
+  {
+    id: 1,
+    name: 'Codefest',
+    date: 'October 10, 2024',
+    status: 'Registered',
+  },
+  {
+    id: 2,
+    name: 'Melody Night',
+    date: 'October 12, 2024',
+    status: 'Registered',
+  },
+];
+
+const attendanceHistory = [
+  {
+    id: 1,
+    name: 'Blitz Chess',
+    date: 'October 11, 2024',
+    status: 'Attended',
+  },
+  {
+    id: 2,
+    name: 'Introduction to AI',
+    date: 'September 5, 2024',
+    status: 'Absent',
+  },
+];
 
 const UserInfo = () => {
   const [user, setUser] = useState<any>(null);
@@ -65,8 +98,26 @@ const UserInfo = () => {
               <CardTitle>Registered Events</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>You have not registered for any events yet.</p>
-              {/* Event participation details will go here */}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Event</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {registeredEvents.map(event => (
+                    <TableRow key={event.id}>
+                      <TableCell>{event.name}</TableCell>
+                      <TableCell>{event.date}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{event.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
 
@@ -75,8 +126,29 @@ const UserInfo = () => {
               <CardTitle>Attendance History</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Your attendance history is empty.</p>
-              {/* Attendance details will go here */}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Event</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {attendanceHistory.map(item => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell>{item.date}</TableCell>
+                      <TableCell>
+                        <Badge variant={item.status === 'Attended' ? 'default' : 'destructive'}>
+                          {item.status === 'Attended' ? <CheckCircle className="w-4 h-4 mr-1" /> : <XCircle className="w-4 h-4 mr-1" />}
+                          {item.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>

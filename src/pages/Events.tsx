@@ -1,178 +1,113 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Users, MapPin } from 'lucide-react';
-import EventRegistrationForm from '@/components/EventRegistrationForm';
+import { CalendarDays, MapPin, Award, Users } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
+import technicalIcon from '@/assets/icons/technical.svg';
+import culturalIcon from '@/assets/icons/cultural.svg';
+import sportsIcon from '@/assets/icons/sports.svg';
 
 interface Event {
   id: number;
   title: string;
-  date: string;
-  prize: string;
   description: string;
-  participants: number;
+  date: string;
   location: string;
+  prize: string;
+  teamSize: string;
   image: string;
+  category: 'technical' | 'cultural' | 'sports';
+  registrationUrl: string;
 }
 
-const Events = () => {
-  const [activeTab, setActiveTab] = useState('arts');
-  const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
-  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+const events: Event[] = [
+  {
+    id: 1,
+    title: 'Codefest',
+    description: 'A 24-hour hackathon to build innovative solutions.',
+    date: 'October 10, 2024',
+    location: 'Online',
+    prize: '₹50,000',
+    teamSize: '2-4 members',
+    image: 'https://cdn-icons-png.flaticon.com/512/1006/1006363.png',
+    category: 'technical',
+    registrationUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSe0wLCFpnVHrfpMVPk8UK99uQ0xjGTVcisrP-8NA0zR-4Lbhg/viewform?usp=header',
+  },
+  {
+    id: 2,
+    title: 'Melody Night',
+    description: 'An evening of soulful music and performances.',
+    date: 'October 12, 2024',
+    location: 'Amphitheatre',
+    prize: '₹20,000',
+    teamSize: 'Solo/Group',
+    image: 'https://cdn-icons-png.flaticon.com/512/3004/3004473.png',
+    category: 'cultural',
+    registrationUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSe0wLCFpnVHrfpMVPk8UK99uQ0xjGTVcisrP-8NA0zR-4Lbhg/viewform?usp=header',
+  },
+  {
+    id: 3,
+    title: 'Blitz Chess',
+    description: 'A fast-paced chess tournament for all skill levels.',
+    date: 'October 11, 2024',
+    location: 'Auditorium',
+    prize: '₹10,000',
+    teamSize: 'Individual',
+    image: 'https://cdn-icons-png.flaticon.com/512/2618/2618459.png',
+    category: 'sports',
+    registrationUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSe0wLCFpnVHrfpMVPk8UK99uQ0xjGTVcisrP-8NA0zR-4Lbhg/viewform?usp=header',
+  },
+];
 
-  const events: { [key: string]: Event[] } = {
-    arts: [
-      {
-        id: 1,
-        title: 'Creative Arts Festival',
-        date: 'May 1-3, 2025',
-        prize: '₹40,000',
-        description: 'Showcase your creativity in painting, sculpture, music, and dance.',
-        participants: 150,
-        location: 'Main Auditorium',
-        image: 'https://img.icons8.com/color/96/paint-palette.png',
-      },
-      {
-        id: 2,
-        title: 'Photography Contest',
-        date: 'May 15, 2025',
-        prize: '₹15,000',
-        description: 'Capture the beauty of campus life and nature.',
-        participants: 80,
-        location: 'Campus Grounds',
-        image: 'https://img.icons8.com/color/96/camera.png',
-      },
-    ],
-    tech: [
-      {
-        id: 3,
-        title: 'Internal Hackathon',
-        date: 'September 20, 2025',
-        prize: '',
-        description: 'Build innovative solutions in 12 hours.',
-        participants: 200,
-        location: 'MU Hall',
-        image: 'https://img.icons8.com/color/96/laptop.png',
-      },
-      // {
-      //   id: 4,
-      //   title: 'AI/ML Workshop',
-      //   date: 'April 20, 2025',
-      //   prize: 'Certificate',
-      //   description: 'Learn the fundamentals of artificial intelligence.',
-      //   participants: 100,
-      //   location: 'Tech Auditorium',
-      //   image: 'https://img.icons8.com/color/96/artificial-intelligence.png',
-      // },
-    ],
-    sports: [
-      {
-        id: 5,
-        title: 'Inter-College Olympics',
-        date: 'February 20-25, 2025',
-        prize: '₹75,000',
-        description: 'Compete in various sports across multiple categories.',
-        participants: 300,
-        location: 'Sports Complex',
-        image: 'https://img.icons8.com/color/96/trophy.png',
-      },
-      {
-        id: 6,
-        title: 'Cricket Tournament',
-        date: 'March 10-12, 2025',
-        prize: '₹25,000',
-        description: 'Show your cricket skills in this exciting tournament.',
-        participants: 120,
-        location: 'Cricket Ground',
-        image: 'https://img.icons8.com/color/96/cricket.png',
-      },
-    ],
-  };
-
-  const tabs = [
-    { id: 'arts', label: 'Arts', icon: 'https://img.icons8.com/color/32/paint-palette.png' },
-    { id: 'tech', label: 'Tech', icon: 'https://img.icons8.com/color/32/laptop.png' },
-    { id: 'sports', label: 'Sports', icon: 'https://img.icons8.com/color/32/trophy.png' },
+const tabs = [
+    { id: 'all', label: 'All Events', icon: 'https://cdn-icons-png.flaticon.com/512/1006/1006363.png' },
+    { id: 'technical', label: 'Technical', icon: technicalIcon },
+    { id: 'cultural', label: 'Cultural', icon: culturalIcon },
+    { id: 'sports', label: 'Sports', icon: sportsIcon },
   ];
 
-  const handleRegisterClick = (event: Event) => {
-    setSelectedEvent(event);
-    setShowRegistrationForm(true);
+const Events = () => {
+  const [activeTab, setActiveTab] = useState(tabs[0].id);
+
+  const handleRegisterClick = (url: string) => {
+    window.open(url, '_blank');
   };
 
-  const handleRegistrationSubmit = (details: { name: string; email: string; mobile: string }) => {
-    if (selectedEvent) {
-      console.log('Registering for:', selectedEvent.title, 'with details:', details);
-      setRegisteredEvents(prev => [...prev, selectedEvent.id]);
-      setShowRegistrationForm(false);
-      setSelectedEvent(null);
-    }
-  };
-
-  const handleRegistrationClose = () => {
-    setShowRegistrationForm(false);
-    setSelectedEvent(null);
-  };
-
-  const isRegistered = (eventId: number) => registeredEvents.includes(eventId);
+  const filteredEvents = activeTab === 'all' 
+    ? events 
+    : events.filter(event => event.category === activeTab);
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-foreground mb-4">Events</h1>
-        <p className="text-lg text-muted-foreground">
-          Discover and participate in exciting college events
-        </p>
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <header className="text-center mb-8">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">FestHub Events</h1>
+        <p className="mt-2 text-lg text-muted-foreground">Explore and register for the most exciting events of the year.</p>
+      </header>
 
-      <div className="flex justify-center mb-8">
-        <div className="flex flex-wrap gap-4 p-1 bg-muted rounded-lg">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-8">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
           {tabs.map((tab) => (
-            <Button
-              key={tab.id}
-              variant={activeTab === tab.id ? 'default' : 'ghost'}
-              onClick={() => setActiveTab(tab.id)}
-              className="flex items-center gap-2"
-            >
-              <img src={tab.icon} alt={tab.label} className="w-5 h-5" />
-              {tab.label}
-            </Button>
+            <TabsTrigger key={tab.id} value={tab.id} className="flex-col h-16">
+              <img src={tab.icon} alt="" className="w-6 h-6 mb-1" />
+              <span>{tab.label}</span>
+            </TabsTrigger>
           ))}
-        </div>
-      </div>
+        </TabsList>
+      </Tabs>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events[activeTab].map((event) => (
-          <Card key={event.id} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/50">
-            <CardHeader className="space-y-4">
-              <div className="flex justify-between items-start">
-                <Badge variant="secondary" className="text-xs">
-                  <img src={tabs.find(t => t.id === activeTab)?.icon} alt="" className="w-4 h-4 mr-1" />
-                  {tabs.find(t => t.id === activeTab)?.label}
-                </Badge>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-primary">{event.prize}</div>
-                </div>
-              </div>
-              
-              <div className="text-center">
-                <img 
-                  src={event.image} 
-                  alt={event.title}
-                  className="w-16 h-16 mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
-                />
-                <CardTitle className="text-xl">{event.title}</CardTitle>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {filteredEvents.map(event => (
+          <Card key={event.id} className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <img src={event.image} alt={event.title} className="w-full h-48 object-cover rounded-t-lg" />
+              <CardTitle className="pt-4">{event.title}</CardTitle>
+              <Badge>{event.category}</Badge>
             </CardHeader>
-
-            <CardContent className="space-y-4">
-              <CardDescription className="text-sm leading-relaxed">
-                {event.description}
-              </CardDescription>
-
-              <div className="space-y-2 text-sm">
+            <CardContent>
+              <CardDescription>{event.description}</CardDescription>
+              <div className="mt-4 space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <CalendarDays className="w-4 h-4 text-muted-foreground" />
                   <span>{event.date}</span>
@@ -181,31 +116,22 @@ const Events = () => {
                   <MapPin className="w-4 h-4 text-muted-foreground" />
                   <span>{event.location}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-muted-foreground" />
-                  <span>{event.participants} participants</span>
+                  <span>{event.teamSize}</span>
+                </div>
+                 <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-muted-foreground" />
+                  <span>{event.prize}</span>
                 </div>
               </div>
-
-              <Button 
-                className="w-full mt-4" 
-                onClick={() => handleRegisterClick(event)}
-                disabled={isRegistered(event.id)}
-              >
-                {isRegistered(event.id) ? 'Registered' : 'Register Now'}
+              <Button className="w-full mt-4" onClick={() => handleRegisterClick(event.registrationUrl)}>
+                Register Now
               </Button>
             </CardContent>
           </Card>
         ))}
       </div>
-
-      {showRegistrationForm && selectedEvent && (
-        <EventRegistrationForm
-          eventName={selectedEvent.title}
-          onRegister={handleRegistrationSubmit}
-          onClose={handleRegistrationClose}
-        />
-      )}
     </div>
   );
 };

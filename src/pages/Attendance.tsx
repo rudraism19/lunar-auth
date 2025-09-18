@@ -1,11 +1,24 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { QrCode, Hash, User as UserIcon, Mail, Users, BookUser, Calendar, Book } from 'lucide-react';
+import { QrCode, Hash, User as UserIcon, BookUser, Calendar, Book } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import QrCodeScanner from '@/components/QrCodeScanner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+
 
 const Attendance = () => {
   const [userRole, setUserRole] = useState(null);
@@ -15,9 +28,12 @@ const Attendance = () => {
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [teacherName, setTeacherName] = useState('');
   const [subject, setSubject] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10)); // Default to today
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [user, setUser] = useState(null);
   const [attendance, setAttendance] = useState([]);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [scannedData, setScannedData] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -29,7 +45,6 @@ const Attendance = () => {
 
     fetchUserData();
 
-    // Mock attendance data (replace with actual Supabase call)
     setAttendance([
         { event: 'Computer Science Lecture', date: '2025-01-14', method: 'QR Code', status: 'Present' },
         { event: 'Mathematics Lab', date: '2025-01-13', method: '6-Digit Code', status: 'Present' },
@@ -43,13 +58,55 @@ const Attendance = () => {
     }
   };
 
-  const generateNewCode = () => {
-    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedCode(newCode);
-    setQrCodeUrl(`https://api.qrserver.com/v1/create-qr-code/?data=${newCode}&size=200x200&ecc=H`);
+  const handleScanSuccess = (decodedText) => {
+    try {
+      const data = JSON.parse(decodedText);
+      if (data.code && data.teacherName && data.subject) {
+        setScannedData(data);
+        setShowConfirmation(true);
+        setIsScannerOpen(false);
+      } else {
+        alert("Invalid QR Code. Please scan a valid code.");
+      }
+    } catch (error) {
+        setScannedData({ code: decodedText, teacherName: 'N/A', subject: 'N/A', date: 'N/A' });
+        setShowConfirmation(true);
+        setIsScannerOpen(false);
+    }
   };
 
-  // Role Selection View
+  const handleConfirmation = () => {
+    console.log("Attendance confirmed for code:", scannedData.code);
+    alert(`Attendance marked for ${scannedData.subject} with ${scannedData.teacherName}.`);
+    setShowConfirmation(false);
+    const newRecord = {
+        event: scannedData.subject,
+        date: scannedData.date,
+        method: 'QR Code',
+        status: 'Present'
+    };
+    setAttendance([newRecord, ...attendance]);
+    setScannedData(null);
+  };
+
+  const handleCancelConfirmation = () => {
+    setShowConfirmation(false);
+    setScannedData(null);
+  };
+
+  const generateNewCode = () => {
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const lectureData = {
+        code: newCode,
+        teacherName,
+        subject,
+        date,
+    };
+    const qrData = JSON.stringify(lectureData);
+    setGeneratedCode(newCode);
+    setQrCodeUrl(`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=200x200&ecc=H`);
+  };
+
   const renderRoleSelection = () => (
     <Card className="max-w-2xl mx-auto text-center animate-in fade-in duration-500">
       <CardHeader>
@@ -58,7 +115,7 @@ const Attendance = () => {
       </CardHeader>
       <CardContent className="flex flex-col md:flex-row gap-4 justify-center p-8">
         <Button variant="outline" className="flex-1 py-8 text-lg" onClick={() => setUserRole('student')}>
-          <Users className="w-6 h-6 mr-2" />
+          <UserIcon className="w-6 h-6 mr-2" />
           Student
         </Button>
         <Button variant="outline" className="flex-1 py-8 text-lg" onClick={() => setUserRole('teacher')}>
@@ -69,7 +126,6 @@ const Attendance = () => {
     </Card>
   );
 
-  // Student View
   const renderStudentView = () => (
     <Tabs value={activeMethod} onValueChange={setActiveMethod}>
       <TabsList className="grid grid-cols-2 w-full mb-8">
@@ -114,15 +170,25 @@ const Attendance = () => {
             <CardDescription>Scan the QR code displayed by your instructor</CardDescription>
           </CardHeader>
           <CardContent className="text-center space-y-6">
-            <img src="https://img.icons8.com/color/96/qr-code.png" alt="QR Attendance" className="w-24 h-24 mx-auto" />
-            <Button>Open Camera Scanner</Button>
+            <Button onClick={() => setIsScannerOpen(!isScannerOpen)}>
+              {isScannerOpen ? 'Close Scanner' : 'Open Camera Scanner'}
+            </Button>
           </CardContent>
         </Card>
+        {isScannerOpen && (
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle>QR Code Scanner</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <QrCodeScanner onScanSuccess={handleScanSuccess} />
+            </CardContent>
+          </Card>
+        )}
       </TabsContent>
     </Tabs>
   );
 
-  // Teacher View
   const renderTeacherView = () => (
     <Card>
       <CardHeader>
@@ -170,6 +236,29 @@ const Attendance = () => {
 
   return (
     <div className="container mx-auto px-4 py-16">
+        {showConfirmation && scannedData && (
+        <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Attendance</AlertDialogTitle>
+              <AlertDialogDescription>
+                You are about to mark your attendance for the following lecture:
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="my-4 space-y-2">
+                <p><strong>Subject:</strong> {scannedData.subject}</p>
+                <p><strong>Teacher:</strong> {scannedData.teacherName}</p>
+                <p><strong>Date:</strong> {scannedData.date}</p>
+                <p className="font-mono text-center text-2xl bg-muted p-2 rounded-md">{scannedData.code}</p>
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={handleCancelConfirmation}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmation}>Confirm</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-foreground mb-4">Attendance</h1>
         <p className="text-lg text-muted-foreground">
@@ -204,8 +293,7 @@ const Attendance = () => {
                     </div>
                     <div className="text-right">
                       <Badge 
-                        variant="outline" 
-                        className={record.status === 'Present' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}
+                        variant={record.status === 'Present' ? 'default' : 'secondary'}
                       >
                         {record.status}
                       </Badge>
