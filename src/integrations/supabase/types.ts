@@ -14,7 +14,178 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attendance_records: {
+        Row: {
+          id: string
+          marked_at: string
+          method: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          marked_at?: string
+          method: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          marked_at?: string
+          method?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance_sessions: {
+        Row: {
+          attendance_code: string
+          created_at: string
+          created_by: string
+          expires_at: string
+          id: string
+          is_active: boolean | null
+          qr_code_data: string | null
+          session_date: string
+          subject: string
+          teacher_name: string
+        }
+        Insert: {
+          attendance_code: string
+          created_at?: string
+          created_by: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean | null
+          qr_code_data?: string | null
+          session_date: string
+          subject: string
+          teacher_name: string
+        }
+        Update: {
+          attendance_code?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean | null
+          qr_code_data?: string | null
+          session_date?: string
+          subject?: string
+          teacher_name?: string
+        }
+        Relationships: []
+      }
+      event_registrations: {
+        Row: {
+          event_id: string
+          id: string
+          registration_date: string
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          registration_date?: string
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          registration_date?: string
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          event_date: string
+          id: string
+          image_url: string | null
+          location: string | null
+          max_participants: number | null
+          prize: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          event_date: string
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          max_participants?: number | null
+          prize?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          max_participants?: number | null
+          prize?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          mobile: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          mobile?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          mobile?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
