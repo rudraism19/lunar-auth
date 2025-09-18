@@ -27,17 +27,29 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
     toast.info('Redirecting to Google for sign in...');
     
     try {
-      // The redirectTo URL must be added to your Supabase project's authentication settings.
-      // Make sure the URL in Supabase does not have a trailing slash.
-      const { error } = await supabase.auth.signInWithOAuth({
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Google OAuth error:', error);
+        throw error;
+      }
+
+      // The user will be redirected to Google, so we don't need to do anything else here
+      console.log('Google OAuth initiated successfully');
+      
     } catch (err: any) {
+      console.error('Google sign in error:', err);
       setError(err.message || 'An error occurred during Google sign in');
       toast.error(err.message || 'An error occurred during Google sign in');
     } finally {
