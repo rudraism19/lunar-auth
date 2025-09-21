@@ -17,6 +17,7 @@ const Calendar = () => {
   // Sample events data
   const events = [
     { date: '2025-01-01', name: 'New Year', type: 'holiday' },
+    { date: '2025-01-13', name: 'Lohri', type: 'festival' },
     { date: '2025-01-14', name: 'Makar Sankranti', type: 'festival' },
     { date: '2025-01-26', name: 'Republic Day', type: 'holiday' },
     { date: '2025-02-03', name: 'Vasant Panchami', type: 'festival' },
@@ -32,6 +33,7 @@ const Calendar = () => {
     { date: '2025-04-06', name: 'Rama Navami', type: 'festival' },
     { date: '2025-04-13', name: 'Mahavir Jayanti', type: 'holiday' },
     { date: '2025-04-14', name: 'Ambedkar Jayanti', type: 'holiday' },
+    { date: '2025-04-14', name: 'Baisakhi', type: 'festival' },
     { date: '2025-04-18', name: 'Good Friday', type: 'holiday' },
     { date: '2025-05-01', name: 'Creative Arts Festival', type: 'arts' },
     { date: '2025-05-02', name: 'Creative Arts Festival', type: 'arts' },
@@ -39,8 +41,10 @@ const Calendar = () => {
     { date: '2025-05-12', name: 'Buddha Purnima', type: 'holiday' },
     { date: '2025-05-30', name: 'Eid al-Fitr', type: 'festival' },
     { date: '2025-06-29', name: 'Rath Yatra', type: 'festival' },
+    { date: '2025-07-11', name: 'Guru Purnima', type: 'festival' },
     { date: '2025-08-06', name: 'Eid al-Adha', type: 'festival' },
-    { date: '2025-08-15', name: 'Independence Day', type: 'holiday' },
+    { date: '2025-08-14', name: 'Independence Day', type: 'holiday' },
+    { date: '2025-08-08', name: 'Raksha Bandhan', type: 'festival' },
     { date: '2025-08-26', name: 'Janmashtami', type: 'festival' },
     { date: '2025-09-07', name: 'Ganesh Chaturthi', type: 'festival' },
     { date: '2025-09-08', name: 'Onam', type: 'festival' },

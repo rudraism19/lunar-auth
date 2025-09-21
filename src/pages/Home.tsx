@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Trophy, Zap, Target, Heart, Lightbulb, Twitter, Instagram } from 'lucide-react';
+import { Calendar, Trophy, Zap, Target, Heart, Lightbulb, Twitter, Instagram, Bold } from 'lucide-react';
 
 interface HomeProps {
   onSectionChange: (section: string) => void;
@@ -161,20 +161,12 @@ const Home = ({ onSectionChange }: HomeProps) => {
                 <CardTitle>Meet the Developers</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-                <p>Hacker Kushwah</p>
-                <p>Chamiya Dwivedi</p>
-                <p>Coder Hima</p>
-                <p>Bhullar</p>
-                <p>Tatya Vichu</p>
-                <p>Doremon</p>
-                <p>Sasti 4g</p>
-                <p>Vertical didi</p>
-                {/* <p>Gourav Kushwah</p>
+               <p>Gourav Kushwah</p>
+                <p>Rudra Bhullar</p>
                 <p>Rishabh Dwivedi</p>
                 <p>Himanshu Gupta</p>
-                <p>Rudra Bhullar</p>
                 <p>Vanshika Rathi</p>
-                <p>Somya Sharma</p> */}
+                <p>Somya Sharma</p>
             </CardContent>
           </Card>
           <Card className="md:col-span-2">
@@ -183,7 +175,21 @@ const Home = ({ onSectionChange }: HomeProps) => {
             </CardHeader>
             <CardContent>
             <p className="leading-relaxed">
- We believe in teamwork, innovation, and making a positive impact in our college community!
+
+We believe in teamwork, innovation, and making a positive impact in our college community!
+<br />
+<strong>Frontend & Core Language:-</strong>
+ React, TypeScript
+<br />
+<strong>Backend & Database:-</strong>
+Supabase, PostgreSQL
+<br />
+<strong>Development & Build Tools:-</strong>
+Vite
+<br />
+<strong>UI & Styling:-</strong>
+Tailwind CSS
+
             </p>
             </CardContent>
             </Card>

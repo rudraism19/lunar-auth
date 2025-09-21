@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, LogOut, User as UserIcon } from 'lucide-react';
+import { Menu, LogOut, User as UserIcon, Sparkles, Home, Calendar as CalendarIcon, Users, CheckSquare, Target } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   DropdownMenu,
@@ -24,12 +24,12 @@ const Layout = ({ children, currentSection, onSectionChange, user }: LayoutProps
   const [scrollProgress, setScrollProgress] = useState(0);
 
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'events', label: 'Events' },
-    { id: 'calendar', label: 'Calendar' },
-    { id: 'features', label: 'Features' },
-    { id: 'attendance', label: 'Attendance' },
-    { id: 'aims', label: 'Aims' },
+    { id: 'home', label: 'Home', icon: Home },
+    { id: 'events', label: 'Events', icon: Users },
+    { id: 'calendar', label: 'Calendar', icon: CalendarIcon },
+    { id: 'attendance', label: 'Attendance', icon: CheckSquare },
+    { id: 'features', label: 'Features', icon: Sparkles },
+    { id: 'aims', label: 'Aims', icon: Target },
   ];
 
   const handleLogout = async () => {
@@ -69,6 +69,7 @@ const Layout = ({ children, currentSection, onSectionChange, user }: LayoutProps
                     onClick={() => onSectionChange(item.id)}
                     className="font-medium transition-transform hover:scale-105"
                   >
+                    <item.icon className="w-4 h-4 mr-2" />
                     {item.label}
                   </Button>
                 </li>
@@ -137,6 +138,7 @@ const Layout = ({ children, currentSection, onSectionChange, user }: LayoutProps
                     className="justify-start animate-in fade-in slide-in-from-left-4"
                     style={{ animationDelay: `${100 + index * 50}ms`}}
                   >
+                    <item.icon className="w-4 h-4 mr-2" />
                     {item.label}
                   </Button>
                 ))}

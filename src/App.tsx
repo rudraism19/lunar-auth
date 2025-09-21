@@ -9,6 +9,7 @@ import { Session } from "@supabase/supabase-js";
 // Components
 import Layout from "./components/Layout";
 import Login from "./components/Login";
+import Chatbot from "./components/Chatbot";
 
 // Pages
 import Home from "./pages/Home";
@@ -25,46 +26,38 @@ const App = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentSection, setCurrentSection] = useState('home');
+  const [activeAttendanceMethod, setActiveAttendanceMethod] = useState('code');
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleSectionChange = (section: string) => {
+  const handleSectionChange = (section: string, subSection?: string) => {
     setCurrentSection(section);
+    if (section === 'attendance' && subSection) {
+      setActiveAttendanceMethod(subSection);
+    }
   };
 
   const renderCurrentSection = () => {
     switch (currentSection) {
-      case 'home':
-        return <Home onSectionChange={handleSectionChange} />;
-      case 'events':
-        return <Events />;
-      case 'calendar':
-        return <Calendar />;
-      case 'features':
-        return <Features onSectionChange={handleSectionChange} />;
-      case 'attendance':
-        return <Attendance />;
-      case 'aims':
-        return <Aims />;
-      case 'user-info':
-        return <UserInfo />;
-      default:
-        return <Home onSectionChange={handleSectionChange} />;
+      case 'home': return <Home onSectionChange={handleSectionChange} />;
+      case 'events': return <Events />;
+      case 'calendar': return <Calendar />;
+      case 'features': return <Features onSectionChange={handleSectionChange} />;
+      case 'attendance': return <Attendance activeMethod={activeAttendanceMethod} onMethodChange={setActiveAttendanceMethod} />;
+      case 'aims': return <Aims />;
+      case 'user-info': return <UserInfo />;
+      default: return <Home onSectionChange={handleSectionChange} />;
     }
   };
 
@@ -98,6 +91,7 @@ const App = () => {
             {renderCurrentSection()}
           </Layout>
         )}
+        <Chatbot />
       </TooltipProvider>
     </QueryClientProvider>
   );

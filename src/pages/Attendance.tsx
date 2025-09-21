@@ -1,13 +1,13 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { QrCode, Hash, User as UserIcon, BookUser, Calendar, Book } from 'lucide-react';
+import { QrCode, Hash, User as UserIcon, BookUser, Calendar, Book, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import QrCodeScanner from '@/components/QrCodeScanner';
+import CodeInput from '@/components/CodeInput';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,11 +19,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
+interface AttendanceProps {
+  activeMethod: string;
+  onMethodChange: (method: string) => void;
+}
 
-const Attendance = () => {
+const Attendance = ({ activeMethod, onMethodChange }: AttendanceProps) => {
   const [userRole, setUserRole] = useState(null);
-  const [activeMethod, setActiveMethod] = useState('code');
-  const [attendanceCode, setAttendanceCode] = useState('');
   const [generatedCode, setGeneratedCode] = useState(null);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [teacherName, setTeacherName] = useState('');
@@ -34,6 +36,19 @@ const Attendance = () => {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [scannedData, setScannedData] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [codeInputKey, setCodeInputKey] = useState(Date.now());
+
+  const mockLectures = [
+    { teacherName: 'Dr. Evelyn Reed', subject: 'Advanced Quantum Physics' },
+    { teacherName: 'Prof. Alan Turing', subject: 'Introduction to Algorithms' },
+    { teacherName: 'Dr. Marie Curie', subject: 'Radioactivity and Chemistry' },
+    { teacherName: 'Prof. Isaac Newton', subject: 'Classical Mechanics' },
+    { teacherName: 'Dr. Ada Lovelace', subject: 'Computational Theory' },
+    { teacherName: 'Prof. Stephen Hawking', subject: 'Cosmology and Black Holes' },
+    { teacherName: 'Dr. Jane Goodall', subject: 'Primate Behavior' },
+    { teacherName: 'Prof. Noam Chomsky', subject: 'Linguistic Theory' },
+  ];
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -51,47 +66,77 @@ const Attendance = () => {
     ]);
   }, []);
 
-  const handleCodeSubmit = () => {
-    if (attendanceCode.length === 6) {
-      console.log('Attendance code submitted:', attendanceCode);
-      setAttendanceCode('');
-    }
+  const handleCodeComplete = (code: string) => {
+    console.log('Marking attendance for code:', code);
+
+    const index = parseInt(code.slice(-1), 10) % mockLectures.length;
+    const selectedLecture = mockLectures[index];
+
+    const lectureData = {
+      code: code,
+      subject: selectedLecture.subject,
+      teacherName: selectedLecture.teacherName,
+      date: new Date().toISOString().slice(0, 10),
+      method: '6-Digit Code'
+    };
+
+    const newRecord = {
+        event: lectureData.subject,
+        date: lectureData.date,
+        method: lectureData.method,
+        status: 'Present'
+    };
+
+    setAttendance(prev => [newRecord, ...prev]);
+    setSubmissionStatus({ message: `Attendance for ${lectureData.teacherName}'s class marked successfully!`, type: 'success' });
+    
+    setTimeout(() => {
+      setSubmissionStatus(null);
+      setCodeInputKey(Date.now());
+    }, 3000);
   };
 
   const handleScanSuccess = (decodedText) => {
     try {
       const data = JSON.parse(decodedText);
       if (data.code && data.teacherName && data.subject) {
-        setScannedData(data);
+        setScannedData({ ...data, method: 'QR Code' });
         setShowConfirmation(true);
         setIsScannerOpen(false);
       } else {
         alert("Invalid QR Code. Please scan a valid code.");
       }
     } catch (error) {
-        setScannedData({ code: decodedText, teacherName: 'N/A', subject: 'N/A', date: 'N/A' });
+        setScannedData({ code: decodedText, teacherName: 'N/A', subject: 'N/A', date: 'N/A', method: 'QR Code' });
         setShowConfirmation(true);
         setIsScannerOpen(false);
     }
   };
 
   const handleConfirmation = () => {
-    console.log("Attendance confirmed for code:", scannedData.code);
-    alert(`Attendance marked for ${scannedData.subject} with ${scannedData.teacherName}.`);
     setShowConfirmation(false);
+
     const newRecord = {
         event: scannedData.subject,
         date: scannedData.date,
-        method: 'QR Code',
+        method: scannedData.method,
         status: 'Present'
     };
-    setAttendance([newRecord, ...attendance]);
+
+    setAttendance(prev => [newRecord, ...prev]);
+    setSubmissionStatus({ message: `Attendance for ${scannedData.teacherName}'s class marked successfully!`, type: 'success' });
+    
     setScannedData(null);
+    setTimeout(() => {
+      setSubmissionStatus(null);
+      setCodeInputKey(Date.now());
+    }, 3000);
   };
 
   const handleCancelConfirmation = () => {
     setShowConfirmation(false);
     setScannedData(null);
+    setCodeInputKey(Date.now());
   };
 
   const generateNewCode = () => {
@@ -127,7 +172,7 @@ const Attendance = () => {
   );
 
   const renderStudentView = () => (
-    <Tabs value={activeMethod} onValueChange={setActiveMethod}>
+    <Tabs value={activeMethod} onValueChange={onMethodChange}>
       <TabsList className="grid grid-cols-2 w-full mb-8">
         <TabsTrigger value="code" className="flex flex-col gap-2 py-3">
           <Hash className="w-5 h-5 text-green-500" />
@@ -146,18 +191,16 @@ const Attendance = () => {
             <CardTitle>6 Digit Code Attendance</CardTitle>
             <CardDescription>Enter the unique code provided by your instructor</CardDescription>
           </CardHeader>
-          <CardContent className="text-center space-y-6">
+          <CardContent className="text-center space-y-6 min-h-[150px]">
             <div className="space-y-4 max-w-md mx-auto">
-              <Input
-                type="text"
-                placeholder="Enter 6 digit code"
-                value={attendanceCode}
-                onChange={(e) => setAttendanceCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                className="text-center text-2xl font-mono tracking-wider"
-                maxLength={6}
-              />
+              <CodeInput key={codeInputKey} length={6} onComplete={handleCodeComplete} />
+              {submissionStatus && (
+                <div className={`mt-4 text-sm font-medium flex items-center justify-center gap-2 ${submissionStatus.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                  {submissionStatus.type === 'success' ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                  {submissionStatus.message}
+                </div>
+              )}
             </div>
-            <Button onClick={handleCodeSubmit} disabled={attendanceCode.length !== 6}>Submit Code</Button>
           </CardContent>
         </Card>
       </TabsContent>

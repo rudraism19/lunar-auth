@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -9,11 +8,13 @@ import {
   Calendar,
   BarChart,
   Bell,
-  MapPin 
+  MapPin,
+  Gift,
+  Calculator
 } from 'lucide-react';
 
 interface FeaturesProps {
-  onSectionChange: (section: string) => void;
+  onSectionChange: (section: string, subSection?: string) => void;
 }
 
 const Features = ({ onSectionChange }: FeaturesProps) => {
@@ -26,6 +27,7 @@ const Features = ({ onSectionChange }: FeaturesProps) => {
       status: 'Live',
       color: 'text-blue-500',
       path: 'attendance',
+      subSection: 'qr',
     },
     {
       icon: UserCheck,
@@ -50,6 +52,7 @@ const Features = ({ onSectionChange }: FeaturesProps) => {
       status: 'Live',
       color: 'text-orange-500',
       path: 'attendance',
+      subSection: 'code',
     },
     {
       icon: Calendar,
@@ -83,6 +86,22 @@ const Features = ({ onSectionChange }: FeaturesProps) => {
       color: 'text-red-500',
       path: 'features',
     },
+    {
+      icon: Gift,
+      title: 'Prize Distribution',
+      description: 'Details about prize distribution ceremonies and winners.',
+      status: 'Coming Soon',
+      color: 'text-yellow-500',
+      path: 'features',
+    },
+    {
+      icon: Calculator,
+      title: '75% Attendance Calculator',
+      description: 'Calculate how many classes you need to meet the 75% attendance requirement.',
+      status: 'Coming Soon',
+      color: 'text-blue-500',
+      path: 'features',
+    },
   ];
 
   const getStatusColor = (status: string) => {
@@ -94,9 +113,9 @@ const Features = ({ onSectionChange }: FeaturesProps) => {
     }
   };
 
-  const handleCardClick = (status: string, path: string) => {
+  const handleCardClick = (status: string, path: string, subSection?: string) => {
     if (status !== 'Coming Soon') {
-      onSectionChange(path);
+      onSectionChange(path, subSection);
     }
   };
 
@@ -110,13 +129,13 @@ const Features = ({ onSectionChange }: FeaturesProps) => {
       </div>
 
       {/* Main Features Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         {features.map((feature, index) => {
           const Icon = feature.icon;
           return (
             <Card 
               key={index}
-              onClick={() => handleCardClick(feature.status, feature.path)}
+              onClick={() => handleCardClick(feature.status, feature.path, feature.subSection)}
               className={`group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/50 relative overflow-hidden ${
                 feature.status === 'Coming Soon'
                   ? 'cursor-not-allowed opacity-50'
@@ -174,9 +193,6 @@ const Features = ({ onSectionChange }: FeaturesProps) => {
           ))}
         </div>
       </div>
-
-      {/* Statistics */}
-      
     </div>
   );
 };
